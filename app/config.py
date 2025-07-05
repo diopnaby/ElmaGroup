@@ -56,6 +56,29 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     
+    # Professional PostgreSQL database for production
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'postgresql://elmagroup:elma_secure_password_2024@localhost/elmagroup_db'
+    
+    # Production database settings
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 10,
+        'pool_recycle': 300,
+        'pool_pre_ping': True,
+        'connect_args': {
+            'sslmode': 'require',
+            'connect_timeout': 10
+        }
+    }
+    
+    # Professional session settings
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    
+    # Security settings
+    WTF_CSRF_ENABLED = True
+    
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
