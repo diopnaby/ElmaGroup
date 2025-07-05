@@ -1,0 +1,276 @@
+{% extends "admin_panel/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 text-gradient">
+                        <i class="fas fa-star me-2"></i>Livres à la Une
+                    </h1>
+                    <p class="text-muted">Gérez les livres affichés dans le carrousel de la page d'accueil (maximum 12 livres recommandés)</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin_panel.books') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Retour aux livres
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Featured Books Preview -->
+    {% if featured_books %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-soft border-radius-medium">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-eye me-2"></i>Aperçu Actuel ({{ featured_books|length }} livres)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for book in featured_books %}
+                        <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                            <div class="card border-0 shadow-soft h-100">
+                                {% if book.cover_image %}
+                                <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}" style="height: 150px; object-fit: cover;">
+                                {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="fas fa-book fa-2x text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-body p-2">
+                                    <h6 class="card-title small mb-1 text-truncate" title="{{ book.title }}">{{ book.title }}</h6>
+                                    <p class="card-text x-small text-muted mb-0">{{ book.author_names }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Featured Books Selection Form -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-soft border-radius-medium">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Sélectionner les Livres Vedettes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_panel.update_featured_books') }}">
+                        <div class="alert alert-info border-radius-medium" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Conseil:</strong> Sélectionnez jusqu'à 12 livres pour un affichage optimal dans le carrousel (4 livres par slide, 3 slides maximum).
+                        </div>
+
+                        <!-- Search Filter -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="searchBooks" class="form-label fw-medium">Rechercher des livres</label>
+                                    <input type="text" class="form-control" id="searchBooks" placeholder="Tapez le titre ou l'auteur...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="selectedCount" class="form-label fw-medium">Livres sélectionnés</label>
+                                    <input type="text" class="form-control" id="selectedCount" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="selectAll()">
+                                    Tout sélectionner
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="clearAll()">
+                                    Tout désélectionner
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Books Grid -->
+                        <div class="row g-3" id="booksGrid">
+                            {% for book in all_books %}
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-6 book-item" data-book-title="{{ book.title.lower() }}" data-book-authors="{{ book.author_names.lower() }}">
+                                <div class="card border book-selection-card h-100 {% if book.is_featured %}border-warning bg-warning bg-opacity-10{% endif %}">
+                                    {% if book.cover_image %}
+                                    <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}" style="height: 150px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                        <i class="fas fa-book fa-2x text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-body p-2">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input book-checkbox" type="checkbox" 
+                                                   name="featured_books" value="{{ book.id }}" 
+                                                   id="book_{{ book.id }}" 
+                                                   {% if book.is_featured %}checked{% endif %}>
+                                            <label class="form-check-label fw-medium" for="book_{{ book.id }}">
+                                                Vedette
+                                            </label>
+                                        </div>
+                                        <h6 class="card-title small mb-1 text-truncate" title="{{ book.title }}">{{ book.title }}</h6>
+                                        <p class="card-text x-small text-muted mb-1">{{ book.author_names }}</p>
+                                        {% if book.book_category %}
+                                        <span class="badge badge-primary x-small">{{ book.book_category.name }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Les changements prendront effet immédiatement sur le site.
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg hover-lift">
+                                        <i class="fas fa-save me-2"></i>Enregistrer la Sélection
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.book-selection-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.book-selection-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.book-selection-card.selected {
+    border-color: #ffc107 !important;
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.x-small {
+    font-size: 0.75rem;
+}
+
+.hidden {
+    display: none !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.book-checkbox');
+    const selectedCountInput = document.getElementById('selectedCount');
+    const searchInput = document.getElementById('searchBooks');
+    const bookItems = document.querySelectorAll('.book-item');
+    const MAX_FEATURED = 12;
+
+    // Update selected count
+    function updateSelectedCount() {
+        const checked = document.querySelectorAll('.book-checkbox:checked').length;
+        selectedCountInput.value = checked;
+        // Update card appearance
+        checkboxes.forEach(checkbox => {
+            const card = checkbox.closest('.book-selection-card');
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    }
+
+    // Prevent selecting more than MAX_FEATURED
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            const checked = document.querySelectorAll('.book-checkbox:checked').length;
+            if (checked > MAX_FEATURED) {
+                checkbox.checked = false;
+                alert('Vous ne pouvez sélectionner que 12 livres vedettes au maximum.');
+            }
+            updateSelectedCount();
+        });
+    });
+
+    // Search functionality
+    function filterBooks() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        bookItems.forEach(item => {
+            const title = item.dataset.bookTitle;
+            const authors = item.dataset.bookAuthors;
+            
+            if (title.includes(searchTerm) || authors.includes(searchTerm)) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+    }
+
+    // Event listeners
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+
+    searchInput.addEventListener('input', filterBooks);
+
+    // Make cards clickable
+    document.querySelectorAll('.book-selection-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.type !== 'checkbox') {
+                const checkbox = card.querySelector('.book-checkbox');
+                checkbox.checked = !checkbox.checked;
+                updateSelectedCount();
+            }
+        });
+    });
+
+    // Initial count update
+    updateSelectedCount();
+});
+
+function selectAll() {
+    const visibleCheckboxes = document.querySelectorAll('.book-item:not(.hidden) .book-checkbox');
+    let count = 0;
+    visibleCheckboxes.forEach(checkbox => {
+        if (count < 12) {
+            checkbox.checked = true;
+            checkbox.closest('.book-selection-card').classList.add('selected');
+            count++;
+        } else {
+            checkbox.checked = false;
+            checkbox.closest('.book-selection-card').classList.remove('selected');
+        }
+    });
+    document.getElementById('selectedCount').value = count;
+}
+
+function clearAll() {
+    const checkboxes = document.querySelectorAll('.book-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        checkbox.closest('.book-selection-card').classList.remove('selected');
+    });
+    document.getElementById('selectedCount').value = '0';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Générer un Token Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Générer un Token d'Invitation Admin</h2>
+    <form method="POST">
+        <button type="submit" class="btn btn-primary mb-3">Générer un nouveau token</button>
+    </form>
+    <div class="card">
+        <div class="card-header">Tokens actifs et historiques</div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Créé le</th>
+                        <th>Expire le</th>
+                        <th>Utilisé</th>
+                        <th>Utilisé par</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in tokens %}
+                    <tr>
+                        <td style="font-family:monospace;">{{ token.token }}</td>
+                        <td>{{ token.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ token.expires_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{% if token.used %}<span class="text-danger">Oui</span>{% else %}<span class="text-success">Non</span>{% endif %}</td>
+                        <td>{% if token.used_by %}{{ token.used_by }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

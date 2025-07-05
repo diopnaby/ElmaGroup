@@ -1,0 +1,332 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">Tableau de Bord ELMA Group</h1>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <!-- Blog Statistics -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Articles Publiés</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ published_posts }}</div>
+                            <div class="text-xs text-muted">{{ draft_posts }} brouillons</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-edit fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Commentaires</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_comments }}</div>
+                            <div class="text-xs text-muted">{{ pending_comments }} en attente</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Library Statistics -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Livres Publiés</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_books }}</div>
+                            <div class="text-xs text-muted">{{ total_authors }} auteurs</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Messages Contact</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_messages }}</div>
+                            <div class="text-xs text-muted">Non traités</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-envelope fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Statistics Row -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Témoignages</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_testimonials }}</div>
+                            <div class="text-xs text-muted">{{ pending_testimonials }} en attente</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Avis Livres</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_reviews }}</div>
+                            <div class="text-xs text-muted">{{ pending_reviews }} en attente</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star-half-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Newsletter</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_subscribers }}</div>
+                            <div class="text-xs text-muted">Abonnés actifs</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity and Popular Content -->
+    <div class="row">
+        <!-- Recent Blog Posts -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Articles Récents</h6>
+                    <a href="{{ url_for('post.index_view') }}" class="btn btn-sm btn-primary">Voir tous</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_posts %}
+                        <div class="list-group list-group-flush">
+                            {% for post in recent_posts %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ post.title }}</h6>
+                                        <small class="text-muted">{{ post.created_at.strftime('%d/%m') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted small">{{ post.excerpt[:100] }}...</p>
+                                    <small>
+                                        <span class="badge bg-{{ 'success' if post.published else 'warning' }}">{{ 'Publié' if post.published else 'Brouillon' }}</span>
+                                        <span class="text-muted">{{ post.views }} vues</span>
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun article récent.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Recent Comments -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-success">Commentaires Récents</h6>
+                    <a href="{{ url_for('comment.index_view') }}" class="btn btn-sm btn-success">Voir tous</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_comments %}
+                        <div class="list-group list-group-flush">
+                            {% for comment in recent_comments %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ comment.commenter_name }}</h6>
+                                        <small class="text-muted">{{ comment.created_at.strftime('%d/%m') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted small">{{ comment.content[:100] }}...</p>
+                                    <small>
+                                        <span class="badge bg-{{ 'success' if comment.approved else 'warning' }}">{{ 'Approuvé' if comment.approved else 'En attente' }}</span>
+                                        <span class="text-muted">sur "{{ comment.post.title[:30] }}..."</span>
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun commentaire récent.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Content -->
+    <div class="row">
+        <!-- Popular Posts -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Articles Populaires (30 derniers jours)</h6>
+                </div>
+                <div class="card-body">
+                    {% if popular_posts %}
+                        <div class="list-group list-group-flush">
+                            {% for post in popular_posts %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ post.title }}</h6>
+                                        <small class="text-muted">{{ post.author.full_name }}</small>
+                                    </div>
+                                    <span class="badge bg-info rounded-pill">{{ post.views }} vues</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune donnée de popularité disponible.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Popular Books -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Livres Populaires (30 derniers jours)</h6>
+                </div>
+                <div class="card-body">
+                    {% if popular_books %}
+                        <div class="list-group list-group-flush">
+                            {% for book in popular_books %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ book.title }}</h6>
+                                        <small class="text-muted">{{ book.author_names }}</small>
+                                    </div>
+                                    <span class="badge bg-warning rounded-pill">{{ book.views }} vues</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune donnée de popularité disponible.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-danger">Messages de Contact Récents</h6>
+                    <a href="{{ url_for('contactmessage.index_view') }}" class="btn btn-sm btn-danger">Voir tous</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_messages %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Sujet</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in recent_messages %}
+                                        <tr>
+                                            <td>{{ message.name }}</td>
+                                            <td>{{ message.email }}</td>
+                                            <td>{{ message.subject[:50] }}{% if message.subject|length > 50 %}...{% endif %}</td>
+                                            <td>{{ message.created_at.strftime('%d/%m/%Y') }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if message.responded else 'warning' }}">
+                                                    {{ 'Traité' if message.responded else 'En attente' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun message récent.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom styles for dashboard */
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-secondary {
+    border-left: 0.25rem solid #858796 !important;
+}
+
+.border-left-dark {
+    border-left: 0.25rem solid #5a5c69 !important;
+}
+
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+</style>
+{% endblock %}

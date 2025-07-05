@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ 'Modifier' if collection else 'Nouvelle' }} collection - Admin ELMA Group
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-layer-group me-2"></i>{{ 'Modifier' if collection else 'Nouvelle' }} collection
+                </h1>
+                <a href="{{ url_for('admin_panel.collections') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informations de la collection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de la collection *</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ collection.name if collection else '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">{{ collection.description if collection else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image de la collection</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            {% if collection and collection.image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Image actuelle:</small><br>
+                                <img src="{{ collection.image }}" alt="Image actuelle" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF. Taille maximale: 16MB</small>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" 
+                                   {{ 'checked' if collection and collection.is_featured else '' }}>
+                            <label class="form-check-label" for="is_featured">
+                                Collection vedette (affichée sur la page d'accueil)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('admin_panel.collections') }}" class="btn btn-secondary me-md-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>{{ 'Mettre à jour' if collection else 'Créer' }} la collection
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Limites</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Limitation des collections</h6>
+                        <p class="small mb-0">ELMA Group est limité à 6 collections maximum pour maintenir une navigation claire et organisée.</p>
+                    </div>
+                    
+                    {% if collection %}
+                    <hr>
+                    <h6>Informations système:</h6>
+                    <p class="small text-muted">
+                        <strong>Créé:</strong> {{ collection.created_at.strftime('%d/%m/%Y à %H:%M') }}<br>
+                        {% if collection.updated_at %}
+                        <strong>Modifié:</strong> {{ collection.updated_at.strftime('%d/%m/%Y à %H:%M') }}<br>
+                        {% endif %}
+                        <strong>Slug:</strong> {{ collection.slug }}<br>
+                        <strong>Livres:</strong> {{ collection.books|length }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

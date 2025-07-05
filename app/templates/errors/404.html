@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Page non trouvée - ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="error-page">
+                <h1 class="display-1 text-primary">404</h1>
+                <h2 class="mb-4">Page non trouvée</h2>
+                <p class="lead">Désolé, la page que vous recherchez n'existe pas ou a été déplacée.</p>
+                <p>Vous pouvez retourner à l'accueil ou explorer nos différentes sections.</p>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary me-3">
+                        <i class="fas fa-home me-2"></i>Retour à l'accueil
+                    </a>
+                    <a href="{{ url_for('library.index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-book me-2"></i>Explorer la bibliothèque
+                    </a>
+                </div>
+                
+                <div class="mt-5">
+                    <h5>Liens utiles</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('blog.index') }}" class="text-decoration-none">Blog</a></li>
+                        <li><a href="{{ url_for('main.collections') }}" class="text-decoration-none">Collections</a></li>
+                        <li><a href="{{ url_for('testimonials.index') }}" class="text-decoration-none">Témoignages</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-decoration-none">À propos</a></li>
+                        <li><a href="{{ url_for('main.contact') }}" class="text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

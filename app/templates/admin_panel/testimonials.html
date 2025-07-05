@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des témoignages - Admin ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-comments me-2"></i>Gestion des témoignages
+                </h1>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-warning fs-6">{{ pending_count }} en attente</span>
+                    <span class="badge bg-success fs-6">{{ approved_count }} approuvé(s)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter tabs -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if status == 'all' }}" 
+                       href="{{ url_for('admin_panel.testimonials', status='all') }}">
+                        Tous ({{ all_count }})
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if status == 'pending' }}" 
+                       href="{{ url_for('admin_panel.testimonials', status='pending') }}">
+                        En attente ({{ pending_count }})
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if status == 'approved' }}" 
+                       href="{{ url_for('admin_panel.testimonials', status='approved') }}">
+                        Approuvés ({{ approved_count }})
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    {% if testimonials %}
+    <div class="row">
+        {% for testimonial in testimonials.items %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">{{ testimonial.display_name }}</h6>
+                        <small class="text-muted">{{ testimonial.display_title or 'Sans titre' }}</small>
+                    </div>
+                    <div>
+                        {% if testimonial.is_active %}
+                        <span class="badge bg-success">Approuvé</span>
+                        {% else %}
+                        <span class="badge bg-warning">En attente</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <blockquote class="blockquote">
+                        <p class="mb-2">{{ testimonial.quote|truncate(200) }}</p>
+                    </blockquote>
+                    
+                    {% if testimonial.book %}
+                    <div class="mt-3">
+                        <small class="text-muted">Concernant: <strong>{{ testimonial.book.title }}</strong></small>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            {{ testimonial.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                        </small>
+                        
+                        <div class="btn-group btn-group-sm">
+                            {% if not testimonial.is_active %}
+                            <form method="POST" action="{{ url_for('admin_panel.approve_testimonial', id=testimonial.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-success" title="Approuver">
+                                    <i class="fas fa-check"></i> Approuver
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            <button type="button" class="btn btn-info" title="Voir détails" 
+                                    data-bs-toggle="modal" data-bs-target="#testimonialModal{{ testimonial.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            
+                            <form method="POST" action="{{ url_for('admin_panel.delete_testimonial', id=testimonial.id) }}" 
+                                  class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce témoignage?')">
+                                <button type="submit" class="btn btn-danger" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal for full testimonial -->
+        <div class="modal fade" id="testimonialModal{{ testimonial.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Témoignage de {{ testimonial.display_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <strong>Auteur:</strong> {{ testimonial.display_name }}<br>
+                            <strong>Titre:</strong> {{ testimonial.display_title or 'Non spécifié' }}<br>
+                            {% if testimonial.email %}
+                            <strong>Email:</strong> {{ testimonial.email }}<br>
+                            {% endif %}
+                            {% if testimonial.book %}
+                            <strong>Livre concerné:</strong> {{ testimonial.book.title }}<br>
+                            {% endif %}
+                            <strong>Date:</strong> {{ testimonial.created_at.strftime('%d/%m/%Y à %H:%M') }}<br>
+                            <strong>Statut:</strong> 
+                            {% if testimonial.is_active %}
+                            <span class="badge bg-success">Approuvé</span>
+                            {% else %}
+                            <span class="badge bg-warning">En attente</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="border-start border-primary ps-3">
+                            <p class="mb-0">{{ testimonial.quote }}</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {% if not testimonial.is_active %}
+                        <form method="POST" action="{{ url_for('admin_panel.approve_testimonial', id=testimonial.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Approuver
+                            </button>
+                        </form>
+                        {% endif %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if testimonials.pages > 1 %}
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Pagination des témoignages">
+            <ul class="pagination">
+                {% if testimonials.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_panel.testimonials', status=status, page=testimonials.prev_num) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in testimonials.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != testimonials.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_panel.testimonials', status=status, page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if testimonials.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_panel.testimonials', status=status, page=testimonials.next_num) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+            <h4>Aucun témoignage {{ 'en attente' if status == 'pending' else ('approuvé' if status == 'approved' else '') }}</h4>
+            <p class="text-muted">
+                {% if status == 'pending' %}
+                Il n'y a actuellement aucun témoignage en attente de modération.
+                {% elif status == 'approved' %}
+                Il n'y a actuellement aucun témoignage approuvé.
+                {% else %}
+                Il n'y a actuellement aucun témoignage dans le système.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

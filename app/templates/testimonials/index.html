@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Témoignages - ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Témoignages</h1>
+            <p class="lead">Découvrez ce que disent nos lecteurs et partenaires.</p>
+        </div>
+    </div>
+
+    {% if featured_testimonials %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Témoignages Vedettes</h2>
+        </div>
+        {% for testimonial in featured_testimonials %}
+        <div class="col-lg-4 mb-4">
+            <div class="card testimonial-card h-100">
+                <div class="card-body">
+                    <div class="testimonial-quote mb-3">
+                        {{ testimonial.quote }}
+                    </div>
+                    <div class="testimonial-author">{{ testimonial.display_name }}</div>
+                    {% if testimonial.display_title %}
+                    <div class="testimonial-title">{{ testimonial.display_title }}</div>
+                    {% endif %}
+                    {% if testimonial.company %}
+                    <div class="testimonial-title">{{ testimonial.company }}</div>
+                    {% endif %}
+                    {% if testimonial.category %}
+                    <span class="badge bg-primary mt-2">{{ testimonial.category }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Tous les Témoignages</h2>
+        </div>
+
+        {% if testimonials.items %}
+            {% for testimonial in testimonials.items %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card testimonial-card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="testimonial-quote flex-grow-1 mb-3">
+                            {{ testimonial.quote }}
+                        </div>
+                        <div class="mt-auto">
+                            <div class="testimonial-author">{{ testimonial.display_name }}</div>
+                            {% if testimonial.display_title %}
+                            <div class="testimonial-title">{{ testimonial.display_title }}</div>
+                            {% endif %}
+                            {% if testimonial.company %}
+                            <div class="testimonial-title">{{ testimonial.company }}</div>
+                            {% endif %}
+                            {% if testimonial.category %}
+                            <span class="badge bg-secondary mt-2">{{ testimonial.category }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if testimonials.pages > 1 %}
+            <div class="col-12">
+                <nav aria-label="Testimonials pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if testimonials.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('testimonials.index', page=testimonials.prev_num) }}">Précédent</a>
+                        </li>
+                        {% endif %}
+                        {% for page_num in testimonials.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != testimonials.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('testimonials.index', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if testimonials.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('testimonials.index', page=testimonials.next_num) }}">Suivant</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">Aucun témoignage</h4>
+                <p>Il n'y a pas encore de témoignages publiés.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="bg-light p-4 rounded">
+                <h3>Partagez votre expérience</h3>
+                <p>Vous avez lu un de nos livres? Partagez votre témoignage avec notre communauté!</p>
+                <a href="{{ url_for('testimonials.submit') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-star me-2"></i>Laisser un témoignage
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

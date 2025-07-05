@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ 'Modifier' if book else 'Nouveau' }} livre - Admin ELMA Group
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-book me-2"></i>{{ 'Modifier' if book else 'Nouveau' }} livre
+                </h1>
+                <a href="{{ url_for('admin_panel.books') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informations du livre</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="title" class="form-label">Titre *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ book.title if book else '' }}" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="language" class="form-label">Langue</label>
+                                <select class="form-select" id="language" name="language">
+                                    <option value="Français" {{ 'selected' if book and book.language == 'Français' else '' }}>Français</option>
+                                    <option value="Anglais" {{ 'selected' if book and book.language == 'Anglais' else '' }}>Anglais</option>
+                                    <option value="Arabe" {{ 'selected' if book and book.language == 'Arabe' else '' }}>Arabe</option>
+                                    <option value="Wolof" {{ 'selected' if book and book.language == 'Wolof' else '' }}>Wolof</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subtitle" class="form-label">Sous-titre</label>
+                            <input type="text" class="form-control" id="subtitle" name="subtitle" 
+                                   value="{{ book.subtitle if book else '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">{{ book.description if book else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="abstract" class="form-label">Résumé</label>
+                            <textarea class="form-control" id="abstract" name="abstract" rows="3">{{ book.abstract if book else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cover_image" class="form-label">Image de couverture</label>
+                            <input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*">
+                            {% if book and book.cover_image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Image actuelle:</small><br>
+                                <img src="{{ book.cover_image }}" alt="Couverture actuelle" class="img-thumbnail" style="max-width: 150px; max-height: 200px;">
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF. Taille maximale: 16MB</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="isbn_13" class="form-label">ISBN-13</label>
+                                <input type="text" class="form-control" id="isbn_13" name="isbn_13" 
+                                       value="{{ book.isbn_13 if book else '' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="isbn_10" class="form-label">ISBN-10</label>
+                                <input type="text" class="form-control" id="isbn_10" name="isbn_10" 
+                                       value="{{ book.isbn_10 if book else '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="price" class="form-label">Prix</label>
+                                <input type="number" step="0.01" class="form-control" id="price" name="price" 
+                                       value="{{ book.price if book else '' }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="currency" class="form-label">Devise</label>
+                                <select class="form-select" id="currency" name="currency">
+                                    <option value="EUR" {{ 'selected' if book and book.currency == 'EUR' else '' }}>EUR</option>
+                                    <option value="USD" {{ 'selected' if book and book.currency == 'USD' else '' }}>USD</option>
+                                    <option value="XOF" {{ 'selected' if book and book.currency == 'XOF' else '' }}>XOF</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="page_count" class="form-label">Nombre de pages</label>
+                                <input type="number" class="form-control" id="page_count" name="page_count" 
+                                       value="{{ book.page_count if book else '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="publication_date" class="form-label">Date de publication</label>
+                            <input type="date" class="form-control" id="publication_date" name="publication_date" 
+                                   value="{{ book.publication_date.strftime('%Y-%m-%d') if book and book.publication_date else '' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Relations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="publisher_id" class="form-label">Éditeur</label>
+                                <select class="form-select" id="publisher_id" name="publisher_id">
+                                    <option value="">Choisir un éditeur</option>
+                                    {% for publisher in publishers %}
+                                    <option value="{{ publisher.id }}" 
+                                            {{ 'selected' if book and book.publisher_id == publisher.id else '' }}>
+                                        {{ publisher.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="book_category_id" class="form-label">Catégorie</label>
+                                <select class="form-select" id="book_category_id" name="book_category_id">
+                                    <option value="">Choisir une catégorie</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}" 
+                                            {{ 'selected' if book and book.book_category_id == category.id else '' }}>
+                                        {{ category.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="author_ids" class="form-label">Auteurs</label>
+                            <select class="form-select" id="author_ids" name="author_ids" multiple size="6">
+                                {% for author in authors %}
+                                <option value="{{ author.id }}" 
+                                        {{ 'selected' if book and author in book.authors else '' }}>
+                                    {{ author.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs auteurs.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="collection_ids" class="form-label">Collections</label>
+                            <select class="form-select" id="collection_ids" name="collection_ids" multiple size="6">
+                                {% for collection in collections %}
+                                <option value="{{ collection.id }}" 
+                                        {{ 'selected' if book and collection in book.collections else '' }}>
+                                    {{ collection.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs collections.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('admin_panel.books') }}" class="btn btn-secondary me-md-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>{{ 'Mettre à jour' if book else 'Créer' }} le livre
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Aide</h6>
+                </div>
+                <div class="card-body">
+                    <h6>Instructions:</h6>
+                    <ul class="small">
+                        <li><strong>Titre:</strong> Obligatoire. Le titre principal du livre.</li>
+                        <li><strong>Auteurs:</strong> Sélectionnez un ou plusieurs auteurs. Créez d'abord l'auteur si nécessaire.</li>
+                        <li><strong>Collections:</strong> Classez le livre dans une ou plusieurs collections thématiques.</li>
+                        <li><strong>ISBN:</strong> Identifiants uniques du livre pour la distribution.</li>
+                        <li><strong>Prix:</strong> Laissez vide si le livre n'est pas en vente.</li>
+                    </ul>
+                    
+                    {% if book %}
+                    <hr>
+                    <h6>Informations système:</h6>
+                    <p class="small text-muted">
+                        <strong>Créé:</strong> {{ book.created_at.strftime('%d/%m/%Y à %H:%M') }}<br>
+                        {% if book.updated_at %}
+                        <strong>Modifié:</strong> {{ book.updated_at.strftime('%d/%m/%Y à %H:%M') }}<br>
+                        {% endif %}
+                        <strong>Slug:</strong> {{ book.slug }}<br>
+                        <strong>Vues:</strong> {{ book.views or 0 }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

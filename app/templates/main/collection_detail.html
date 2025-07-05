@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ collection.name }} - Collections ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.collections') }}">Collections</a></li>
+                    <li class="breadcrumb-item active">{{ collection.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            {% if collection.image %}
+            <img src="{{ collection.image }}" class="img-fluid rounded" alt="{{ collection.name }}">
+            {% else %}
+            <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" style="height: 300px;">
+                <i class="fas fa-layer-group fa-4x"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold">{{ collection.name }}</h1>
+            {% if collection.description %}
+            <p class="lead">{{ collection.description }}</p>
+            {% endif %}
+            
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="stat-item text-center">
+                        <h3 class="text-primary">{{ books|length }}</h3>
+                        <p class="text-muted">Livres dans cette collection</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item text-center">
+                        <h3 class="text-success">{{ books|map(attribute='authors')|sum(start=[])|list|length }}</h3>
+                        <p class="text-muted">Auteurs</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item text-center">
+                        <h3 class="text-info">{{ books|sum(attribute='views') }}</h3>
+                        <p class="text-muted">Lectures totales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Livres de cette collection</h2>
+        </div>
+        
+        {% if books %}
+            {% for book in books %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card book-card h-100">
+                    {% if book.cover_image %}
+                    <img src="{{ book.cover_image }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                    {% else %}
+                    <div class="card-img-top book-cover bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-book fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title">{{ book.title }}</h6>
+                        {% if book.subtitle %}
+                        <p class="card-text small text-muted">{{ book.subtitle }}</p>
+                        {% endif %}
+                        <p class="card-text small">{{ book.author_names }}</p>
+                        {% if book.description %}
+                        <p class="card-text small">{{ book.description[:80] }}{% if book.description|length > 80 %}...{% endif %}</p>
+                        {% endif %}
+                        {% if book.current_price %}
+                        <div class="mt-auto book-price">{{ book.formatted_price }}</div>
+                        {% endif %}
+                        <a href="{{ url_for('library.book_detail', slug=book.slug) }}" class="btn btn-sm btn-primary mt-2">
+                            Voir détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">Aucun livre</h4>
+                <p>Cette collection ne contient pas encore de livres.</p>
+                <a href="{{ url_for('library.index') }}" class="btn btn-primary">Explorer tous les livres</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if related_posts %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Articles liés</h3>
+        </div>
+        {% for post in related_posts %}
+        <div class="col-lg-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="text-decoration-none">
+                            {{ post.title }}
+                        </a>
+                    </h6>
+                    <p class="card-text small">{{ post.excerpt or (post.content|striptags)[:100] + '...' }}</p>
+                    <small class="text-muted">{{ post.created_at.strftime('%d/%m/%Y') }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

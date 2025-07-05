@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Laisser un témoignage - ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Laisser un témoignage</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Partagez votre expérience avec ELMA Group et aidez d'autres lecteurs à découvrir nos livres.</p>
+                    
+                    <form method="POST" action="{{ url_for('testimonials.submit') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="quote" class="form-label">Votre témoignage *</label>
+                            <textarea class="form-control" id="quote" name="quote" rows="4" required 
+                                     placeholder="Partagez votre expérience avec ELMA Group..."></textarea>
+                            <div class="form-text">Maximum 1000 caractères.</div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="display_name" class="form-label">Nom à afficher *</label>
+                                <input type="text" class="form-control" id="display_name" name="display_name" required
+                                       placeholder="Votre nom ou pseudonyme">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required
+                                       placeholder="votre.email@exemple.com">
+                                <div class="form-text">Votre email ne sera pas publié.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="display_title" class="form-label">Titre/Profession (optionnel)</label>
+                                <input type="text" class="form-control" id="display_title" name="display_title"
+                                       placeholder="Ex: Professeur, Étudiant, Lecteur passionné...">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="company" class="form-label">Entreprise/Organisation (optionnel)</label>
+                                <input type="text" class="form-control" id="company" name="company"
+                                       placeholder="Nom de votre entreprise ou organisation">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Localisation (optionnel)</label>
+                                <input type="text" class="form-control" id="location" name="location"
+                                       placeholder="Ville, Pays">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Catégorie *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Choisissez une catégorie</option>
+                                    <option value="Lecteur">Lecteur</option>
+                                    <option value="Auteur">Auteur</option>
+                                    <option value="Étudiant">Étudiant</option>
+                                    <option value="Enseignant">Enseignant</option>
+                                    <option value="Libraire">Libraire</option>
+                                    <option value="Partenaire">Partenaire</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="photo" class="form-label">Photo de profil (optionnel)</label>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                            <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF. Taille maximale: 16MB</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="context" class="form-label">Contexte (optionnel)</label>
+                            <input type="text" class="form-control" id="context" name="context"
+                                   placeholder="Ex: À propos du livre 'Titre', de l'événement...">
+                            <div class="form-text">Précisez le contexte de votre témoignage si applicable.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Note (optionnel)</label>
+                            <select class="form-select" id="rating" name="rating">
+                                <option value="">Pas de note</option>
+                                <option value="5">5 étoiles - Excellent</option>
+                                <option value="4">4 étoiles - Très bien</option>
+                                <option value="3">3 étoiles - Bien</option>
+                                <option value="2">2 étoiles - Moyen</option>
+                                <option value="1">1 étoile - Décevant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="border rounded p-3 mb-3">
+                            <h6>Autorisations</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="can_use_name" name="can_use_name" checked>
+                                <label class="form-check-label" for="can_use_name">
+                                    Autoriser l'utilisation de mon nom
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="can_use_title" name="can_use_title" checked>
+                                <label class="form-check-label" for="can_use_title">
+                                    Autoriser l'utilisation de mon titre/profession
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="can_use_photo" name="can_use_photo">
+                                <label class="form-check-label" for="can_use_photo">
+                                    Autoriser l'utilisation de ma photo de profil
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Votre témoignage sera examiné par notre équipe avant publication. 
+                                Nous nous réservons le droit de modérer ou de ne pas publier certains contenus.
+                            </small>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('testimonials.index') }}" class="btn btn-secondary me-md-2">Annuler</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Envoyer le témoignage
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

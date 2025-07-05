@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Mot du Président - ELMA Group{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="page-hero py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="display-4 mb-3">Mot du Président</h1>
+                <p class="lead">Découvrez la vision, la mission et les valeurs qui animent ELMA Group à travers le message de son fondateur.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- President's Message Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4">
+                <h2 class="section-title">Le Mot du Président</h2>
+                <blockquote class="blockquote lead mb-4">
+                    "Éveiller les idées, bâtir l'avenir. ELMA GROUP s'engage à promouvoir la richesse intellectuelle et culturelle africaine à travers des publications de qualité exceptionnelle. Nous croyons fermement que les idées et les récits africains méritent une plateforme mondiale pour inspirer, éduquer et transformer."
+                </blockquote>
+                <p>Notre mission est de créer un pont entre les auteurs, chercheurs et lecteurs africains, en offrant des contenus qui reflètent la diversité et la profondeur de la pensée continentale.</p>
+                <p>Nous aspirons à être reconnus comme la maison d'édition de référence pour la littérature, la recherche académique et les publications culturelles africaines. Notre vision est de créer un écosystème éditorial qui valorise et diffuse la pensée africaine contemporaine.</p>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{{ url_for('static', filename='images/omar.jpg') }}" alt="Président ELMA Group" class="img-fluid rounded shadow mb-3" style="max-width: 320px;">
+                <h5 class="mt-3 mb-0">El Hadji Omar Massaly</h5>
+                <p class="text-primary">Président Fondateur</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Nos Valeurs</h2>
+            <p class="lead">Les principes qui guident notre action quotidienne</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="value-card text-center p-4 h-100">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-lightbulb fa-3x text-primary"></i>
+                    </div>
+                    <h4>Excellence</h4>
+                    <p>Nous nous engageons à publier uniquement des contenus de la plus haute qualité, rigoureusement sélectionnés et édités selon les standards internationaux.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card text-center p-4 h-100">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-globe-africa fa-3x text-primary"></i>
+                    </div>
+                    <h4>Authenticité</h4>
+                    <p>Nous valorisons les voix authentiques africaines et soutenons les auteurs qui racontent leurs propres histoires avec sincérité et créativité.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card text-center p-4 h-100">
+                    <div class="value-icon mb-3">
+                        <i class="fas fa-hands-helping fa-3x text-primary"></i>
+                    </div>
+                    <h4>Collaboration</h4>
+                    <p>Nous croyons en la force de la collaboration panafricaine et travaillons étroitement avec des partenaires à travers tout le continent.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Rejoignez notre aventure</h2>
+                <p class="lead mb-4">Que vous soyez auteur, chercheur, ou simplement passionné de culture africaine, nous serions ravis de collaborer avec vous.</p>
+                <a href="{{ url_for('main.contact') }}" class="btn btn-primary btn-lg me-3">Nous contacter</a>
+                <a href="{{ url_for('main.collections') }}" class="btn btn-outline-primary btn-lg">Découvrir nos livres</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

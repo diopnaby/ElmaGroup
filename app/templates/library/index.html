@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Bibliothèque - ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 text-gradient mb-3">
+                <i class="fas fa-book-open me-3"></i>Bibliothèque ELMA Group
+            </h1>
+            <p class="lead text-muted">Découvrez notre collection exceptionnelle de livres africains</p>
+            <div class="mx-auto" style="width: 100px; height: 4px; background: linear-gradient(135deg, var(--primary-color), var(--c-brain));"></div>
+        </div>
+    </div>
+    
+    <!-- Featured Books Carousel Section -->
+    {% if featured_books %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4 text-gradient">
+                <i class="fas fa-star me-2"></i>Livres à la Une
+            </h2>
+            <p class="text-muted mb-4">Découvrez notre sélection de livres exceptionnels</p>
+        </div>
+        
+        <!-- Featured Books Carousel -->
+        <div class="col-12">
+            <div id="featuredBooksCarousel" class="carousel slide shadow-medium border-radius-medium bg-white" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-inner p-4">
+                    {% set chunks = featured_books | batch(4, '') %}
+                    {% for chunk in chunks %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <div class="row g-4">
+                            {% for book in chunk %}
+                            {% if book %}
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card book-card h-100 hover-lift shadow-soft border-radius-medium border-0">
+                                    <div class="position-relative">
+                                        {% if book.cover_image %}
+                                        <img src="{{ book.cover_image }}" class="card-img-top book-cover border-radius-soft" alt="{{ book.title }}" style="height: 250px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="card-img-top book-cover bg-gradient-secondary d-flex align-items-center justify-content-center border-radius-soft" style="height: 250px;">
+                                            <i class="fas fa-book fa-3x text-white"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="position-absolute top-0 end-0 m-2">
+                                            <span class="badge bg-warning text-dark animate-pulse">
+                                                <i class="fas fa-star me-1"></i>Vedette
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body d-flex flex-column p-3">
+                                        <h6 class="card-title fw-semibold mb-2 text-truncate" title="{{ book.title }}">{{ book.title }}</h6>
+                                        {% if book.subtitle %}
+                                        <p class="card-text small text-muted mb-2 text-truncate" title="{{ book.subtitle }}">{{ book.subtitle }}</p>
+                                        {% endif %}
+                                        <p class="card-text small text-muted mb-2">
+                                            <i class="fas fa-user me-1"></i>{{ book.author_names }}
+                                        </p>
+                                        {% if book.book_category %}
+                                        <p class="card-text small mb-2">
+                                            <span class="badge badge-primary">{{ book.book_category.name }}</span>
+                                        </p>
+                                        {% endif %}
+                                        {% if book.current_price %}
+                                        <div class="mt-auto mb-2">
+                                            <span class="h6 text-success fw-bold">{{ book.formatted_price }}</span>
+                                        </div>
+                                        {% endif %}
+                                        <a href="{{ url_for('library.book_detail', slug=book.slug) }}" 
+                                           class="btn btn-primary btn-sm hover-lift mt-auto">
+                                            <i class="fas fa-eye me-1"></i>Voir détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            <!-- Fill empty slots if less than 4 books -->
+                            {% for i in range(4 - chunk|length) %}
+                            <div class="col-lg-3 col-md-6 col-sm-6"></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Carousel Controls -->
+                {% if chunks | length > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#featuredBooksCarousel" data-bs-slide="prev">
+                    <div class="bg-dark rounded-circle p-2 opacity-75 hover-lift">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </div>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#featuredBooksCarousel" data-bs-slide="next">
+                    <div class="bg-dark rounded-circle p-2 opacity-75 hover-lift">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </div>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                
+                <!-- Carousel Indicators -->
+                <div class="carousel-indicators mb-2">
+                    {% for chunk in chunks %}
+                    <button type="button" data-bs-target="#featuredBooksCarousel" data-bs-slide-to="{{ loop.index0 }}" 
+                            {% if loop.first %}class="active"{% endif %} aria-label="Slide {{ loop.index }}"></button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- All Books Section -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h2 class="text-gradient">
+                <i class="fas fa-books me-2"></i>Tous les Livres
+            </h2>
+            <p class="text-muted">Explorez notre collection complète</p>
+        </div>
+        
+        {% if books.items %}
+            {% for book in books.items %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card book-card h-100 hover-lift shadow-soft border-radius-medium border-0">
+                    <div class="position-relative">
+                        {% if book.cover_image %}
+                        <img src="{{ book.cover_image }}" class="card-img-top book-cover border-radius-soft" alt="{{ book.title }}" style="height: 250px; object-fit: cover;">
+                        {% else %}
+                        <div class="card-img-top book-cover bg-gradient-secondary d-flex align-items-center justify-content-center border-radius-soft" style="height: 250px;">
+                            <i class="fas fa-book fa-3x text-white"></i>
+                        </div>
+                        {% endif %}
+                        {% if book.is_featured %}
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star me-1"></i>Vedette
+                            </span>
+                        </div>
+                        {% endif %}
+                        {% if book.is_new_release %}
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-success">
+                                <i class="fas fa-plus me-1"></i>Nouveau
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column p-3">
+                        <h6 class="card-title fw-semibold mb-2">{{ book.title }}</h6>
+                        {% if book.subtitle %}
+                        <p class="card-text small text-muted mb-2">{{ book.subtitle }}</p>
+                        {% endif %}
+                        <p class="card-text small text-muted mb-2">
+                            <i class="fas fa-user me-1"></i>{{ book.author_names }}
+                        </p>
+                        {% if book.book_category %}
+                        <p class="card-text small mb-2">
+                            <span class="badge badge-primary">{{ book.book_category.name }}</span>
+                        </p>
+                        {% endif %}
+                        {% if book.description %}
+                        <p class="card-text small text-muted mb-2">{{ book.description[:100] }}{% if book.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                        {% if book.current_price %}
+                        <div class="mt-auto mb-2">
+                            <span class="h6 text-success fw-bold">{{ book.formatted_price }}</span>
+                        </div>
+                        {% endif %}
+                        <a href="{{ url_for('library.book_detail', slug=book.slug) }}" 
+                           class="btn btn-primary btn-sm hover-lift mt-auto">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Enhanced Pagination -->
+            {% if books.pages > 1 %}
+            <div class="col-12">
+                <nav aria-label="Books pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if books.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link hover-lift" href="{{ url_for('library.index', page=books.prev_num) }}">
+                                <i class="fas fa-chevron-left me-1"></i>Précédent
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in books.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != books.page %}
+                                <li class="page-item">
+                                    <a class="page-link hover-lift" href="{{ url_for('library.index', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link bg-gradient-primary border-0">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if books.has_next %}
+                        <li class="page-item">
+                            <a class="page-link hover-lift" href="{{ url_for('library.index', page=books.next_num) }}">
+                                Suivant<i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info border-radius-medium shadow-soft" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle fa-2x me-3 text-info"></i>
+                    <div>
+                        <h4 class="alert-heading mb-2">Aucun livre disponible</h4>
+                        <p class="mb-0">Il n'y a pas encore de livres dans notre bibliothèque. Revenez bientôt pour découvrir nos nouvelles publications!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Custom CSS for this page -->
+<style>
+/* Enhanced Book Cards */
+.book-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.book-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(16, 21, 36, 0.15) !important;
+}
+
+/* Carousel Enhancements */
+.carousel-control-prev:hover .bg-dark,
+.carousel-control-next:hover .bg-dark {
+    background-color: var(--primary-color) !important;
+    transform: scale(1.1);
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    background-color: transparent;
+}
+
+.carousel-indicators .active {
+    background-color: var(--primary-color);
+}
+
+/* Featured Badge Animation */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+    }
+}
+
+.animate-pulse {
+    animation: pulse-glow 2s infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .carousel-inner {
+        padding: 2rem 1rem;
+    }
+    
+    .book-cover {
+        height: 200px !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-rotate carousel
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = new bootstrap.Carousel(document.getElementById('featuredBooksCarousel'), {
+        interval: 5000,
+        wrap: true,
+        pause: 'hover'
+    });
+});
+</script>
+{% endblock %}

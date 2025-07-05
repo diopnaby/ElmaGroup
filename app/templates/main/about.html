@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}À propos - ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">À propos d'ELMA Group</h1>
+
+            <div class="lead mb-4">
+                <p>ELMA Group est une maison d'édition spécialisée dans la promotion de la littérature africaine, l'économie du développement et l'éducation.</p>
+            </div>
+
+            <!-- President's Message Section -->
+            <!--{% if president_message and president_message.show_on_about %}
+            <div class="president-message-section bg-light p-4 rounded mb-5">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center mb-3 mb-md-0">
+                        <img src="{{ url_for('static', filename='images/' + president_message.president_photo) }}"
+                             alt="{{ president_message.president_name }}"
+                             class="img-fluid rounded-circle border border-2 border-primary"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="text-primary mb-3">{{ president_message.title }}</h3>
+                        <div class="president-message-content">
+                            {{ president_message.content|safe }}
+                        </div>
+                        <div class="mt-3">
+                            <strong>{{ president_message.president_name }}</strong><br>
+                            <small class="text-muted">{{ president_message.president_title }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}-->
+
+            <h2>Notre Mission</h2>
+            <p>Nous nous engageons à promouvoir la richesse de la littérature africaine et à soutenir les auteurs émergents et établis du continent. Notre mission est de créer un pont entre les écrivains africains et le monde, en facilitant l'accès à leurs œuvres et en valorisant la diversité culturelle de l'Afrique.</p>
+
+            <h2>Nos Domaines d'Expertise</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                            <h5>Littérature Africaine</h5>
+                            <p>Romans, poésie, essais et œuvres contemporaines d'auteurs africains.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5>Économie du Développement</h5>
+                            <p>Ouvrages sur l'économie africaine et le développement durable.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-graduation-cap fa-3x text-info mb-3"></i>
+                            <h5>Éducation</h5>
+                            <p>Manuels scolaires et ressources pédagogiques adaptées au contexte africain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Nos Valeurs</h2>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-check text-primary me-2"></i><strong>Excellence:</strong> Nous nous engageons à publier des œuvres de la plus haute qualité.</li>
+                <li class="mb-2"><i class="fas fa-check text-primary me-2"></i><strong>Diversité:</strong> Nous célébrons la richesse et la diversité des voix africaines.</li>
+                <li class="mb-2"><i class="fas fa-check text-primary me-2"></i><strong>Innovation:</strong> Nous adoptons les nouvelles technologies pour diffuser la culture africaine.</li>
+                <li class="mb-2"><i class="fas fa-check text-primary me-2"></i><strong>Accessibilité:</strong> Nous rendons la littérature africaine accessible au plus grand nombre.</li>
+            </ul>
+
+            {% if library_stats %}
+            <h2>Nos Réalisations</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-item">
+                        <h3 class="text-primary">{{ library_stats.total_books }}</h3>
+                        <p class="text-muted">Livres publiés</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-item">
+                        <h3 class="text-success">{{ library_stats.total_authors }}</h3>
+                        <p class="text-muted">Auteurs partenaires</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-item">
+                        <h3 class="text-info">{{ library_stats.total_views }}</h3>
+                        <p class="text-muted">Lectures</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-item">
+                        <h3 class="text-warning">{{ library_stats.average_rating|round(1) }}/5</h3>
+                        <p class="text-muted">Note moyenne</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-5">
+                <h3>Rejoignez-nous</h3>
+                <p>Découvrez la richesse de la littérature africaine et rejoignez notre communauté de lecteurs passionnés.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{{ url_for('library.index') }}" class="btn btn-primary">
+                        <i class="fas fa-book me-2"></i>Explorer la bibliothèque
+                    </a>
+                    <a href="{{ url_for('main.contact') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope me-2"></i>Nous contacter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

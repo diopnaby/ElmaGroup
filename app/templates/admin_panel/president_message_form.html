@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Modifier le Message du Président{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Modifier le Message du Président</h2>
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+            <label for="title">Titre</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ message.title or '' }}" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="content">Contenu</label>
+            <textarea class="form-control" id="content" name="content" rows="8" required>{{ message.content or '' }}</textarea>
+        </div>
+        {# Optional: Add photo upload if needed #}
+        {#
+        <div class="form-group mb-3">
+            <label for="photo">Photo du Président (optionnel)</label>
+            <input type="file" class="form-control" id="photo" name="photo">
+            {% if message.photo %}
+                <img src="{{ message.photo }}" alt="Photo du Président" class="img-thumbnail mt-2" style="max-width: 200px;">
+            {% endif %}
+        </div>
+        #}
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('admin_panel.dashboard') }}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

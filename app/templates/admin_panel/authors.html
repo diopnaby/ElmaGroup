@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des auteurs - Admin ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-users me-2"></i>Gestion des auteurs
+                </h1>
+                <a href="{{ url_for('admin_panel.new_author') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nouvel auteur
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {% if authors %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Liste des auteurs ({{ authors.total }} total)</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Nationalité</th>
+                            <th>Livres</th>
+                            <th>Date de naissance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for author in authors.items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if author.photo %}
+                                    <img src="{{ author.photo }}" alt="{{ author.name }}" 
+                                         class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ author.name }}</h6>
+                                        <small class="text-muted">{{ author.slug }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ author.nationality or '-' }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ author.books|length }} livre(s)</span>
+                            </td>
+                            <td>{{ author.birth_date.strftime('%d/%m/%Y') if author.birth_date else '-' }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('library.author_detail', slug=author.slug) }}" 
+                                       class="btn btn-outline-info" title="Voir">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('admin_panel.edit_author', id=author.id) }}" 
+                                       class="btn btn-outline-primary" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if author.books|length == 0 %}
+                                    <form method="POST" action="{{ url_for('admin_panel.delete_author', id=author.id) }}" 
+                                          class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet auteur?')">
+                                        <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <button class="btn btn-outline-secondary" disabled title="Impossible de supprimer (livres associés)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        {% if authors.pages > 1 %}
+        <div class="card-footer">
+            <nav aria-label="Pagination des auteurs">
+                <ul class="pagination pagination-sm justify-content-center mb-0">
+                    {% if authors.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin_panel.authors', page=authors.prev_num) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page_num in authors.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != authors.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin_panel.authors', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">…</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if authors.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin_panel.authors', page=authors.next_num) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <h4>Aucun auteur</h4>
+            <p class="text-muted">Commencez par ajouter votre premier auteur.</p>
+            <a href="{{ url_for('admin_panel.new_author') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Ajouter un auteur
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

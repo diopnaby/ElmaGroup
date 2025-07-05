@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Communication - ELMA Group{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="mb-3 text-success">Communication</h1>
+            <p class="lead text-muted">ELMA Group accompagne les institutions et entreprises dans leur stratégie de communication, la création de contenus, la gestion de l'image de marque et l'organisation d'événements.</p>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h4 text-secondary mb-3">Nos Services de Communication</h2>
+            <ul class="list-group list-group-flush mb-4">
+                <li class="list-group-item">Stratégie de communication globale</li>
+                <li class="list-group-item">Création de contenus (rédaction, visuels, vidéos)</li>
+                <li class="list-group-item">Relations presse et médias</li>
+                <li class="list-group-item">Organisation d'événements et conférences</li>
+                <li class="list-group-item">Conception de supports (brochures, affiches, sites web)</li>
+                <li class="list-group-item">Gestion de l'image de marque</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="h4 text-secondary mb-3">Ils nous ont fait confiance</h2>
+        </div>
+        {% if companies %}
+        {% for company in companies %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 text-center">
+                {% if company.logo %}
+                <img src="{{ company.logo }}" class="mx-auto mt-3" alt="{{ company.name }}" style="width: 80px; height: 80px; object-fit: contain;">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title mb-1">{{ company.name }}</h6>
+                    <p class="card-text small text-muted">{{ company.description or '' }}</p>
+                    {% if company.website %}
+                    <a href="{{ company.website }}" class="btn btn-link btn-sm" target="_blank">Site web</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center text-muted">Aucune entreprise accompagnée pour le moment.</div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

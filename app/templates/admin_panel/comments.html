@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Commentaires - Admin ELMA Group{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-comments me-2"></i>Gestion des Commentaires
+                </h1>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if current_status == 'all' else '' }}" 
+                       href="{{ url_for('admin_panel.comments', status='all') }}">
+                        Tous les commentaires
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if current_status == 'pending' else '' }}" 
+                       href="{{ url_for('admin_panel.comments', status='pending') }}">
+                        En attente
+                        {% set pending_count = comments.total if current_status == 'pending' else 0 %}
+                        {% if pending_count > 0 %}
+                        <span class="badge bg-warning ms-1">{{ pending_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if current_status == 'approved' else '' }}" 
+                       href="{{ url_for('admin_panel.comments', status='approved') }}">
+                        Approuvés
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if current_status == 'spam' else '' }}" 
+                       href="{{ url_for('admin_panel.comments', status='spam') }}">
+                        Spam
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Comments List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Liste des Commentaires</h5>
+                </div>
+                <div class="card-body">
+                    {% if comments.items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Auteur</th>
+                                    <th>Commentaire</th>
+                                    <th>Article</th>
+                                    <th>Statut</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for comment in comments.items %}
+                                <tr class="{{ 'table-warning' if not comment.approved and not comment.is_spam else 'table-success' if comment.approved else 'table-danger' if comment.is_spam else '' }}">
+                                    <td>
+                                        <div>
+                                            <strong>{{ comment.name or comment.author.full_name if comment.author else 'Anonyme' }}</strong>
+                                            {% if comment.email %}
+                                            <br><small class="text-muted">{{ comment.email }}</small>
+                                            {% endif %}
+                                            {% if comment.website %}
+                                            <br><small><a href="{{ comment.website }}" target="_blank" class="text-decoration-none">{{ comment.website }}</a></small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="comment-preview" style="max-width: 300px;">
+                                            {{ comment.content[:100] }}{% if comment.content|length > 100 %}...{% endif %}
+                                        </div>
+                                        {% if comment.content|length > 100 %}
+                                        <button class="btn btn-link btn-sm p-0" onclick="toggleComment('{{ comment.id }}')">
+                                            <small>Voir plus</small>
+                                        </button>
+                                        <div id="comment-{{ comment.id }}" class="d-none">
+                                            <hr>
+                                            {{ comment.content|nl2br|safe }}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('blog.post_detail', slug=comment.post.slug) }}" 
+                                           target="_blank" class="text-decoration-none">
+                                            {{ comment.post.title[:50] }}{% if comment.post.title|length > 50 %}...{% endif %}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if comment.is_spam %}
+                                        <span class="badge bg-danger">Spam</span>
+                                        {% elif comment.approved %}
+                                        <span class="badge bg-success">Approuvé</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">En attente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ comment.created_at.strftime('%d/%m/%Y') }}<br>{{ comment.created_at.strftime('%H:%M') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            {% if not comment.approved and not comment.is_spam %}
+                                            <form method="POST" action="{{ url_for('admin_panel.approve_comment', id=comment.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-success" title="Approuver">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('admin_panel.reject_comment', id=comment.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-warning" title="Rejeter">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                            {% elif comment.approved %}
+                                            <form method="POST" action="{{ url_for('admin_panel.reject_comment', id=comment.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-warning" title="Rejeter">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                            {% elif comment.is_spam %}
+                                            <form method="POST" action="{{ url_for('admin_panel.approve_comment', id=comment.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-success" title="Approuver">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            
+                                            <form method="POST" action="{{ url_for('admin_panel.delete_comment', id=comment.id) }}" 
+                                                  class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">
+                                                <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if comments.pages > 1 %}
+                    <nav aria-label="Comments pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if comments.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin_panel.comments', page=comments.prev_num, status=current_status) }}">
+                                    Précédent
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for page_num in comments.iter_pages() %}
+                                {% if page_num %}
+                                    {% if page_num != comments.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin_panel.comments', page=page_num, status=current_status) }}">
+                                            {{ page_num }}
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if comments.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin_panel.comments', page=comments.next_num, status=current_status) }}">
+                                    Suivant
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    
+                    {% else %}
+                    <div class="alert alert-info">
+                        <h4 class="alert-heading">Aucun commentaire</h4>
+                        <p>Il n'y a pas encore de commentaires à modérer.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleComment(commentId) {
+    const commentDiv = document.getElementById('comment-' + commentId);
+    if (commentDiv.classList.contains('d-none')) {
+        commentDiv.classList.remove('d-none');
+    } else {
+        commentDiv.classList.add('d-none');
+    }
+}
+</script>
+{% endblock %}

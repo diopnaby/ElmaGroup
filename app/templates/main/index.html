@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - ELMA Group{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="hero" class="mb-5">
+    <div class="hero-box">
+        <h1 class="display-4 fw-bold text-shadow text-white">ELMA Group</h1>
+        <p class="lead mb-4 text-white">Maison d'édition spécialisée dans la promotion de la littérature africaine, l'économie du développement et l'éducation</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{{ url_for('library.index') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-book me-2"></i>Explorer la Bibliothèque
+            </a>
+            <a href="{{ url_for('blog.index') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-blog me-2"></i>Lire le Blog
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+{% if stats %}
+<section class="container mb-5">
+    <div class="row text-center">
+        <div class="col-6 col-md-3 mb-4">
+            <a href="{{ url_for('library.index') }}" class="text-decoration-none text-dark">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                        <h3 class="fw-bold text-primary">{{ stats.total_books }}</h3>
+                        <p class="text-muted">Livres Publiés</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+            <a href="{{ url_for('library.authors') }}" class="text-decoration-none text-dark">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-user-edit fa-3x text-success mb-3"></i>
+                        <h3 class="fw-bold text-success">{{ stats.total_authors }}</h3>
+                        <p class="text-muted">Auteurs</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+            <a href="{{ url_for('blog.index') }}" class="text-decoration-none text-dark">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-edit fa-3x text-info mb-3"></i>
+                        <h3 class="fw-bold text-info">{{ stats.total_posts }}</h3>
+                        <p class="text-muted">Articles de Blog</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+            <a href="{{ url_for('main.collections') }}" class="text-decoration-none text-dark">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-layer-group fa-3x text-warning mb-3"></i>
+                        <h3 class="fw-bold text-warning">{{ stats.total_collections }}</h3>
+                        <p class="text-muted">Collections</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- President's Message Section -->
+{% if president_message and president_message.show_on_homepage %}
+<section class="president-message-section mb-5">
+    <div class="container">
+        <div class="president-message-box">
+            <!-- President's photo floated right (larger) -->
+            <img src="{{ url_for('static', filename='images/' + president_message.president_photo) }}" 
+                 alt="{{ president_message.president_name }}" 
+                 class="img-thumbnail float-end ms-4 mb-3 president-message-photo">
+
+            <!-- Title -->
+            <h2 class="text-primary">{{ president_message.title }}</h2>
+
+            <!-- Message -->
+            <div class="text-dark president-message-content-scroll">
+                {{ president_message.content|safe }}
+            </div>
+
+            <!-- Signature section -->
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1 text-dark">{{ president_message.president_name }}</h5>
+                    <p class="text-muted mb-0 small">{{ president_message.president_title }}</p>
+                </div>
+                <div>
+                    <img src="{{ url_for('static', filename='images/logo_1.jpeg') }}" 
+                         alt="ELMA Group Logo" 
+                         class="img-fluid"
+                         style="height: 50px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Services Section -->
+<section class="services-section py-5 bg-white border-bottom">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="mb-3 text-primary">Nos Services</h2>
+                <p class="lead text-muted">ELMA Group propose deux pôles d'excellence&nbsp;: <strong>Édition</strong> et <strong>Communication</strong>. Nous accompagnons auteurs, institutions et entreprises dans la valorisation de leurs idées et projets.</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card h-100 shadow-sm border-0 service-card">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-book-open fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title mb-2">Édition</h4>
+                        <p class="card-text text-muted">Accompagnement éditorial complet&nbsp;: conseil, correction, mise en page, impression, diffusion et promotion d'ouvrages littéraires, scientifiques ou institutionnels. Nous valorisons la littérature africaine et les voix émergentes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-5">
+                <div class="card h-100 shadow-sm border-0 service-card">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-bullhorn fa-3x text-success"></i>
+                        </div>
+                        <h4 class="card-title mb-2">Communication</h4>
+                        <p class="card-text text-muted">Stratégie de communication, création de contenus, relations presse, organisation d'événements, conception de supports et gestion de l'image de marque. Nous aidons à faire rayonner vos projets auprès de vos publics cibles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Collections Section -->
+{% if featured_collections %}
+<section class="container mb-5" id="collection">
+    <div class="row py-5">
+        <div class="col-12">
+            <h2 class="mb-4 text-center">Nos Collections</h2>
+            <p class="text-center">Découvrez nos collections de livres spécialisés dans la littérature africaine, l'économie du développement et l'éducation.</p>
+        </div>
+    </div>
+    <div class="row">
+        {% for collection in featured_collections %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                {% if collection.image %}
+                <img src="{{ collection.image }}" class="card-img-top" alt="{{ collection.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-primary d-flex align-items-center justify-content-center text-white" style="height: 200px;">
+                    <i class="fas fa-layer-group fa-3x"></i>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ collection.name }}</h5>
+                    <p class="card-text flex-grow-1">{{ collection.description or 'Collection de livres spécialisés.' }}</p>
+                    <div class="mt-auto">
+                        <small class="text-muted">{{ collection.books|length }} livre(s)</small><br>
+                        <a href="{{ url_for('main.collection_detail', slug=collection.slug) }}" class="btn btn-primary btn-sm mt-2">Explorer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Books Section -->
+{% if featured_books %}
+<section class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Livres à la Une</h2>
+            </div>
+        </div>
+        <div id="featuredBooksCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for chunk in featured_books[:12]|batch(4, fill_with=None) %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="row">
+                        {% for book in chunk %}
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            {% if book %}
+                            <div class="card book-card h-100">
+                                {% if book.cover_image %}
+                                <img src="{{ book.cover_image }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                                {% else %}
+                                <div class="card-img-top book-cover bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-book fa-3x text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title">{{ book.title }}</h6>
+                                    <p class="card-text small text-muted">{{ book.authors[0].name if book.authors else 'Auteur inconnu' }}</p>
+                                    {% if book.price %}
+                                    <div class="mt-auto book-price">{{ book.price }} {{ book.currency }}</div>
+                                    {% endif %}
+                                    <a href="{{ url_for('library.book_detail', slug=book.slug) }}" class="btn btn-sm btn-outline-primary mt-2">Voir détails</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredBooksCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredBooksCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+            </button>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('library.index') }}" class="btn btn-outline-primary">Voir tous les livres</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Posts Section -->
+{% if featured_posts %}
+<section class="container mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Articles à la Une</h2>
+        </div>
+    </div>
+    <div class="row">
+        {% for post in featured_posts %}
+        <div class="col-lg-4 mb-4">
+            <div class="card blog-post-card h-100">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text flex-grow-1">{{ post.excerpt or (post.content[:150] + '...') }}</p>
+                    <div class="mt-auto">
+                        <div class="blog-post-meta mb-2">
+                            <small class="text-muted">
+                                {% if post.author %}<i class="fas fa-user me-1"></i>{{ post.author.name }}{% endif %}
+                                <i class="fas fa-calendar ms-2 me-1"></i>{{ post.created_at.strftime('%d/%m/%Y') }}
+                            </small>
+                        </div>
+                        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="btn btn-primary btn-sm">Lire la suite</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('blog.index') }}" class="btn btn-outline-primary">Voir tous les articles</a>
+    </div>
+</section>
+{% endif %}
+
+<!-- Testimonials Section -->
+{% if featured_testimonials %}
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4 text-center">Ce qu'ils disent de nous</h2>
+            </div>
+        </div>
+        <div class="row">
+            {% for testimonial in featured_testimonials %}
+            <div class="col-lg-4 mb-4">
+                <div class="card testimonial-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            {% if testimonial.photo and testimonial.can_use_photo %}
+                            <img src="{{ testimonial.photo }}" alt="{{ testimonial.display_name }}" 
+                                 class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3 text-white" 
+                                 style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                                {{ testimonial.display_name[0].upper() }}
+                            </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <div class="testimonial-author fw-bold">{{ testimonial.display_name }}</div>
+                                {% if testimonial.display_title %}
+                                <div class="testimonial-title text-muted small">{{ testimonial.display_title }}</div>
+                                {% endif %}
+                                {% if testimonial.company %}
+                                <div class="testimonial-company text-muted small">{{ testimonial.company }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="testimonial-quote fst-italic">
+                            "{{ testimonial.quote }}"
+                        </div>
+                        {% if testimonial.rating %}
+                        <div class="mt-2">
+                            {% for i in range(testimonial.rating) %}
+                            <i class="fas fa-star text-warning"></i>
+                            {% endfor %}
+                            {% for i in range(5 - testimonial.rating) %}
+                            <i class="far fa-star text-muted"></i>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('testimonials.index') }}" class="btn btn-outline-primary">Voir tous les témoignages</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-3">Rejoignez notre communauté</h2>
+        <p class="lead mb-4">Découvrez notre collection de livres et restez informé de nos dernières actualités</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{{ url_for('testimonials.submit') }}" class="btn btn-light btn-lg">
+                <i class="fas fa-star me-2"></i>Laisser un témoignage
+            </a>
+            <a href="{{ url_for('main.contact') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-envelope me-2"></i>Nous contacter
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

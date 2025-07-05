@@ -1,0 +1,38 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Entreprises accompagnées (Communication)</h2>
+    <a href="{{ url_for('admin_panel.add_communication_company') }}" class="btn btn-primary">Ajouter une entreprise</a>
+</div>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Logo</th>
+            <th>Description</th>
+            <th>Site web</th>
+            <th>Date accompagnement</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for company in companies %}
+        <tr>
+            <td>{{ company.name }}</td>
+            <td>{% if company.logo %}<img src="{{ company.logo }}" alt="Logo" style="height:40px;max-width:80px;object-fit:contain;">{% endif %}</td>
+            <td>{{ company.description|truncate(60) }}</td>
+            <td>{% if company.website %}<a href="{{ company.website }}" target="_blank">Site</a>{% endif %}</td>
+            <td>{{ company.date_accompanied.strftime('%d/%m/%Y') if company.date_accompanied else '' }}</td>
+            <td>
+                <a href="{{ url_for('admin_panel.edit_communication_company', company_id=company.id) }}" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="{{ url_for('admin_panel.delete_communication_company', company_id=company.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette entreprise ?');">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not companies %}
+<div class="alert alert-info">Aucune entreprise enregistrée.</div>
+{% endif %}
+{% endblock %}
