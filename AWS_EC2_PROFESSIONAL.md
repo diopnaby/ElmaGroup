@@ -119,12 +119,138 @@ pip install -r requirements-production.txt
 ```
 
 #### **Step 4: Configure Professional Services**
+
+##### **4.1 PostgreSQL Database Setup**
 ```bash
-# Nginx configuration
-# Gunicorn service setup
-# PostgreSQL database setup
-# SSL certificate installation
-# Firewall configuration
+# Configure PostgreSQL for ELMA Group
+sudo -u postgres psql
+
+# Create database and user
+CREATE DATABASE elmagroup_db;
+CREATE USER elmagroup WITH PASSWORD 'elma_secure_password_2024';
+GRANT ALL PRIVILEGES ON DATABASE elmagroup_db TO elmagroup;
+ALTER USER elmagroup CREATEDB;
+\q
+
+# Configure PostgreSQL for application access
+sudo nano /etc/postgresql/14/main/postgresql.conf
+# Ensure: listen_addresses = 'localhost'
+
+sudo nano /etc/postgresql/14/main/pg_hba.conf
+# Add: local elmagroup_db elmagroup md5
+
+# Restart PostgreSQL
+sudo systemctl restart postgresql
+```
+
+##### **4.2 Gunicorn Service Setup**
+```bash
+# Create Gunicorn service file
+sudo nano /etc/systemd/system/elmagroup.service
+
+[Unit]
+Description=ELMA Group Gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/ElmaGroup
+Environment="PATH=/home/ubuntu/ElmaGroup/venv/bin"
+ExecStart=/home/ubuntu/ElmaGroup/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/ElmaGroup/elmagroup.sock application:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable and start service
+sudo systemctl daemon-reload
+sudo systemctl enable elmagroup
+sudo systemctl start elmagroup
+```
+
+##### **4.3 Nginx Configuration**
+```bash
+# Create Nginx site configuration
+sudo nano /etc/nginx/sites-available/elmagroup
+
+server {
+    listen 80;
+    server_name your-domain.com www.your-domain.com;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    
+    location /static/ {
+        root /home/ubuntu/ElmaGroup/app;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/ElmaGroup/elmagroup.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Security headers
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options DENY;
+    add_header X-XSS-Protection "1; mode=block";
+}
+
+# Enable site and remove default
+sudo ln -s /etc/nginx/sites-available/elmagroup /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+##### **4.4 SSL Certificate Installation**
+```bash
+# Install Certbot for Let's Encrypt SSL
+sudo apt install certbot python3-certbot-nginx -y
+
+# Get SSL certificate (after domain is pointed to server)
+sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+
+# Test automatic renewal
+sudo certbot renew --dry-run
+```
+
+##### **4.5 Firewall Configuration**
+```bash
+# Configure UFW firewall
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+
+# Check status
+sudo ufw status
+```
+
+##### **4.6 Database Migration & Setup**
+```bash
+# Set environment variables
+export DATABASE_URL="postgresql://elmagroup:elma_secure_password_2024@localhost:5432/elmagroup_db"
+export FLASK_ENV="production"
+
+# Migrate data from SQLite to PostgreSQL
+python migrate_database.py
+
+# Initialize database tables
+python -c "
+from application import application
+with application.app_context():
+    from app.extensions import db
+    db.create_all()
+    print('✅ Database tables created')
+"
 ```
 
 ### 📊 **Professional Monitoring & Maintenance**

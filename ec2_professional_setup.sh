@@ -70,6 +70,37 @@ sudo -u postgres createuser elmagroup
 sudo -u postgres createdb elmagroup_db -O elmagroup
 sudo -u postgres psql -c "ALTER USER elmagroup PASSWORD 'elma_secure_password_2024';"
 
+# Configure PostgreSQL for application access
+sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = 'localhost'/" /etc/postgresql/14/main/postgresql.conf
+echo "local   elmagroup_db    elmagroup                               md5" | sudo tee -a /etc/postgresql/14/main/pg_hba.conf
+sudo systemctl restart postgresql
+
+# Set up automated database backups
+echo "💾 Setting up automated database backups..."
+sudo mkdir -p /opt/elmagroup/backups
+sudo tee /opt/elmagroup/backup-database.sh > /dev/null <<'EOF'
+#!/bin/bash
+# ELMA Group Database Backup Script
+BACKUP_DIR="/opt/elmagroup/backups"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+DB_NAME="elmagroup_db"
+DB_USER="elmagroup"
+
+# Create backup
+PGPASSWORD="elma_secure_password_2024" pg_dump -U $DB_USER -h localhost $DB_NAME | gzip > $BACKUP_DIR/elmagroup_db_$TIMESTAMP.sql.gz
+
+# Keep only last 7 days of backups
+find $BACKUP_DIR -name "elmagroup_db_*.sql.gz" -mtime +7 -delete
+
+echo "$(date): Backup completed - elmagroup_db_$TIMESTAMP.sql.gz" >> /var/log/elmagroup_backup.log
+EOF
+
+sudo chmod +x /opt/elmagroup/backup-database.sh
+sudo chown -R elmagroup:elmagroup /opt/elmagroup
+
+# Schedule daily backups at 3 AM
+echo "0 3 * * * /opt/elmagroup/backup-database.sh" | sudo crontab -u elmagroup -
+
 # Configure Gunicorn service
 echo "⚙️ Setting up Gunicorn service..."
 sudo tee /etc/systemd/system/elmagroup.service > /dev/null <<EOF
